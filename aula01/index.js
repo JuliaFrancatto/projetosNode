@@ -1,56 +1,81 @@
 const express = require('express');
-
-const app =  express();
+const app = express();
 const port = 3000;
 
-app.get('/',(req, res) => {
-    res.send('Hello World');
-});
+// Middleware para analisar o corpo das requisições
+//app.use(bodyParser.json());
 
-app.get('/calculadora', (req, res) => {
-    const { numero1, numero2, operacao } = req.query;
+app.get('/', (req, res) => {
+    res.send('Hello Word');
+})
 
-//converte os parâmetros para números
-const number1 = parseFloat(numero1);
-const number2 = parseFloat(numero2);
+    app.get('/calculadora', (req, res) => {
+        const { numero1, numero2, operacao } = req.query;
 
-//verifica se os parâmetros são números válidos
-if (isNaN(number1) || isNaN(number2)) {
-    return res.status(400).json({erro: 'numero1 e numero2 devem ser numeros'});
-}
+    // Converte os parâmetros para números
+    const number1 = parseFloat(numero1);
+    const number2 = parseFloat(numero2);    
 
-//cria uma variável javascript
-let resultado;
+    // Verifica se os parâmetros são números válidos
+    if (isNaN(number1) || isNaN(number2)) {
+        return res.status(400).json({ erro: 'numero1 e numero2 devem ser números' });
+    }    
 
-switch (operacao) {
-    case 'soma':
-        resultado = number1 + number2;
-        break;
-    case 'multiplicacao':
-        resultado = number1 * number2;
-        break;
-    case 'divisao':
-        if (number2 === 0) {
-            return res.status(400).json({ erro: 'Divisão por zero não é permitida'})
-        }
-        resultado = number1 / number2;
-        break;
-    default:
-        return res.status(400).json({ erro: 'Operação inválida'});
+    // cria uma variável javascript
+    let resultado;
+
+    switch (operacao) {
+        case 'soma':
+            resultado = number1 + number2;
+            break;
+        case 'subtracao':
+            resultado = number1 - number2;
+            break;
+        case 'multiplicacao':
+            resultado = number1 * number2;
+            break;
+        case 'divisao':
+            if (number2 === 0) {
+                return res.status(400).json({ erro: 'Divisão por zero não é permitida' });
+            }
+            resultado = number1 / number2;
+            break;
+        default:
+            return res.status(400).json({ erro: 'Operação inválida' });
     }
     res.json({ resultado });
 });
 
-//inicia o servidor
-app.listen(port, () => {
-    console.log(`Servidor rodando na porta ${port}`)
+// Função para verificar se um número é primo
+function isPrime(num) {
+    if (num <= 1) return false;
+    if (num <= 3) return true;
+    if (num % 2 === 0 || num % 3 === 0) return false;
+    for (let i = 5; i * i <= num; i += 6) {
+      if (num % i === 0 || num % (i + 2) === 0) return false;
+    }
+    return true;
+  }
+
+app.get('/primo', (req, res) => {
+    const { numero1 } = req.query;
+
+   const resultado = isPrime(numero1);
+
 });
 
-//mantém o servidor rodando mesmo se ocorrer erro
+
+// Iniciar o servidor
+app.listen(port, () => {
+    console.log(`Servidor rodando na porta ${port}`);
+});
+
+// Mantém o servidor rodando mesmo se ocorrer um erro
 process.on('uncaughtException', (err) => {
     console.error('Erro não tratado:', err);
-});
-
-process.on('unhandledRejection', (err) => {
+  });
+  
+  process.on('unhandledRejection', (err) => {
     console.error('Rejeição não tratada:', err);
-});
+  });
+  module.exports = app;
