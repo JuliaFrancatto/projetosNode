@@ -1,4 +1,5 @@
 const express = require('express');
+
 const app = express();
 const port = 3000;
 
@@ -46,25 +47,6 @@ app.get('/', (req, res) => {
     res.json({ resultado });
 });
 
-// Função para verificar se um número é primo
-function isPrime(num) {
-    if (num <= 1) return false;
-    if (num <= 3) return true;
-    if (num % 2 === 0 || num % 3 === 0) return false;
-    for (let i = 5; i * i <= num; i += 6) {
-      if (num % i === 0 || num % (i + 2) === 0) return false;
-    }
-    return true;
-  }
-
-app.get('/primo', (req, res) => {
-    const { numero1 } = req.query;
-
-   const resultado = isPrime(numero1);
-
-});
-
-
 // Iniciar o servidor
 app.listen(port, () => {
     console.log(`Servidor rodando na porta ${port}`);
@@ -78,4 +60,5 @@ process.on('uncaughtException', (err) => {
   process.on('unhandledRejection', (err) => {
     console.error('Rejeição não tratada:', err);
   });
+
   module.exports = app;
